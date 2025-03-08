@@ -31,5 +31,12 @@ MoviesLens-1M is provided by MeLU, and you can find it from [here](https://githu
 
 The utils/loader is used for data preprocessing, and you can customize this part for your own data.  
  Use the following commands for running a sub-dataset:  
- unzip data.zip file  
- zsh train.sh # Training with default hyper-parameters.
+ unzip data.zip file
+run:
+
+```bash
+chmod +x TaNP/clone_movielens_dataset.sh
+TaNP/clone_movielens_dataset.sh
+```
+
+zsh train.sh # Training with default hyper-parameters.
