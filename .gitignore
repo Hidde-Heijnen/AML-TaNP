@@ -1,0 +1,6 @@
+# Ignore data folder
+TaNP/data/
+
+**/.DS_Store
+.DS_Store?
+.DS_Store
