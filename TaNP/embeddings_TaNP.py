@@ -367,3 +367,57 @@ class Gating_Decoder(nn.Module):
 
         y_pred = self.final_projection(hidden_final)
         return y_pred
+
+class Plain_Decoder(nn.Module):
+    """
+    Maps target input x_target and z to predictions y_target, but without any FiLM or gating (just removed the FiLM related layers).
+    Simple 3-layer MLP with dropout. 
+    We include 'task_dim' and 'task' in the signature so it matches the original TaNP decoder's interface, but we do not use them.
+    """
+
+    def __init__(self, x_dim, z_dim, task_dim, h1_dim, h2_dim, h3_dim, y_dim, dropout_rate):
+        super(PlainDecoder, self).__init__()
+        self.x_dim = x_dim
+        self.z_dim = z_dim
+        self.task_dim = task_dim  # not used here, but kept for consistency
+        self.h1_dim = h1_dim
+        self.h2_dim = h2_dim
+        self.h3_dim = h3_dim
+        self.y_dim = y_dim
+        self.dropout_rate = dropout_rate
+        self.dropout = nn.Dropout(self.dropout_rate)
+
+        self.hidden_layer_1 = nn.Linear(self.x_dim + self.z_dim, self.h1_dim)
+        self.hidden_layer_2 = nn.Linear(self.h1_dim, self.h2_dim)
+        self.hidden_layer_3 = nn.Linear(self.h2_dim, self.h3_dim)
+        self.final_projection = nn.Linear(self.h3_dim, self.y_dim)
+
+    def forward(self, x, z, task):
+        """
+        'task' is ignored in this plain version (no FiLM), included just to match the function signature for easier debugging
+        """
+        # Repeat z for each row of x, as in original code
+        interaction_size, _ = x.size()
+        z = z.unsqueeze(0).repeat(interaction_size, 1)
+
+        # 1) Concatenate x and z
+        inputs = torch.cat((x, z), dim=1)
+
+        # 2) First layer -> dropout -> ReLU
+        hidden_1 = self.hidden_layer_1(inputs)
+        hidden_1 = self.dropout(hidden_1)
+        hidden_2 = F.relu(hidden_1)
+
+        # 3) Second layer -> dropout -> ReLU
+        hidden_2 = self.hidden_layer_2(hidden_2)
+        hidden_2 = self.dropout(hidden_2)
+        hidden_3 = F.relu(hidden_2)
+
+        # 4) Third layer -> dropout -> ReLU
+        hidden_3 = self.hidden_layer_3(hidden_3)
+        hidden_3 = self.dropout(hidden_3)
+        hidden_final = F.relu(hidden_3)
+
+        # 5) Output layer
+        y_pred = self.final_projection(hidden_final)
+        return y_pred

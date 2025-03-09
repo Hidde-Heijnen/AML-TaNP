@@ -5,13 +5,15 @@ from copy import deepcopy
 from torch.autograd import Variable
 from torch.nn import functional as F
 from collections import OrderedDict
-from embeddings_TaNP import Item, User, Encoder, MuSigmaEncoder, Decoder, Gating_Decoder, TaskEncoder, MemoryUnit
+from embeddings_TaNP import Item, User, Encoder, Plain_Decoder, MuSigmaEncoder, Decoder, Gating_Decoder, TaskEncoder, MemoryUnit, Movie_Item, Movie_User
 import torch.nn as nn
 
 class NP(nn.Module):
     def __init__(self, config):
         super(NP, self).__init__()
-        self.x_dim = config['second_embedding_dim'] * 2
+        self.dataset = config['dataset']
+        self.decoder = config['decoder']
+        self.x_dim = config['second_embedding_dim'] * 2 if self.dataset == 'ml-1m' else config['embedding_dim'] * 8
         # use one-hot or not?
         self.y_dim = 1
         self.z1_dim = config['z1_dim']
@@ -35,8 +37,12 @@ class NP(nn.Module):
         self.dropout_rate = config['dropout_rate']
 
         # Initialize networks
-        self.item_emb = Item(config)
-        self.user_emb = User(config)
+        if self.dataset == 'ml-1m':
+            self.item_emb = Movie_Item(config)
+            self.user_emb = Movie_User(config)
+        else:
+            self.item_emb = Item(config)
+            self.user_emb = User(config)
         # This encoder is used to generated z actually, it is a latent encoder in ANP.
         self.xy_to_z = Encoder(self.x_dim, self.y_dim, self.enc_h1_dim, self.enc_h2_dim, self.z1_dim, self.dropout_rate)
         self.z_to_mu_sigma = MuSigmaEncoder(self.z1_dim, self.z2_dim, self.z_dim)
@@ -44,8 +50,12 @@ class NP(nn.Module):
         self.xy_to_task = TaskEncoder(self.x_dim, self.y_dim, self.taskenc_h1_dim, self.taskenc_h2_dim, self.taskenc_final_dim,
                                       self.dropout_rate)
         self.memoryunit = MemoryUnit(self.clusters_k, self.taskenc_final_dim, self.temperture)
-        #self.xz_to_y = Gating_Decoder(self.x_dim, self.z_dim, self.taskenc_final_dim, self.dec_h1_dim, self.dec_h2_dim, self.dec_h3_dim, self.y_dim, self.dropout_rate)
-        self.xz_to_y = Decoder(self.x_dim, self.z_dim, self.taskenc_final_dim, self.dec_h1_dim, self.dec_h2_dim, self.dec_h3_dim, self.y_dim, self.dropout_rate)
+        if self.decoder == 'gating-film':
+            self.xz_to_y = Gating_Decoder(self.x_dim, self.z_dim, self.taskenc_final_dim, self.dec_h1_dim, self.dec_h2_dim, self.dec_h3_dim, self.y_dim, self.dropout_rate)
+        elif self.decoder == 'film':
+            self.xz_to_y = Decoder(self.x_dim, self.z_dim, self.taskenc_final_dim, self.dec_h1_dim, self.dec_h2_dim, self.dec_h3_dim, self.y_dim, self.dropout_rate)
+        else:
+            self.xz_to_y = Plain_Decoder(self.x_dim, self.z_dim, self.taskenc_final_dim, self.dec_h1_dim, self.dec_h2_dim, self.dec_h3_dim, self.y_dim, self.dropout_rate)
 
     def aggregate(self, z_i):
         return torch.mean(z_i, dim=0)
@@ -60,12 +70,25 @@ class NP(nn.Module):
 
     # embedding each (item, user) as the x for np
     def embedding(self, x):
-        if_dim = self.item_emb.feature_dim
-        item_x = Variable(x[:, 0:if_dim], requires_grad=False).float()
-        user_x = Variable(x[:, if_dim:], requires_grad=False).float()
-        item_emb = self.item_emb(item_x)
-        user_emb = self.user_emb(user_x)
-        x = torch.cat((item_emb, user_emb), 1)
+        if self.dataset == 'ml-1m':
+            rate_idx = Variable(x[:, 0], requires_grad=False)
+            genre_idx = Variable(x[:, 1:26], requires_grad=False)
+            director_idx = Variable(x[:, 26:2212], requires_grad=False)
+            actor_idx = Variable(x[:, 2212:10242], requires_grad=False)
+            gender_idx = Variable(x[:, 10242], requires_grad=False)
+            age_idx = Variable(x[:, 10243], requires_grad=False)
+            occupation_idx = Variable(x[:, 10244], requires_grad=False)
+            area_idx = Variable(x[:, 10245], requires_grad=False)
+            item_emb = self.item_emb(rate_idx, genre_idx, director_idx, actor_idx)
+            user_emb = self.user_emb(gender_idx, age_idx, occupation_idx, area_idx)
+            x = torch.cat((item_emb, user_emb), 1)
+        else:
+            if_dim = self.item_emb.feature_dim
+            item_x = Variable(x[:, 0:if_dim], requires_grad=False).float()
+            user_x = Variable(x[:, if_dim:], requires_grad=False).float()
+            item_emb = self.item_emb(item_x)
+            user_emb = self.user_emb(user_x)
+            x = torch.cat((item_emb, user_emb), 1)
         return x
 
     def forward(self, x_context, y_context, x_target, y_target):
@@ -146,7 +169,12 @@ class Trainer(torch.nn.Module):
         total_x = torch.cat((support_set_x, query_set_x), 0)
         total_y = torch.cat((support_set_y, query_set_y), 0)
         total_size = total_x.size(0)
+
         context_min = self.opt['context_min']
+
+        if self.dataset == 'ml-1m':
+            context_min = min(context_min, total_size - 1)
+
         num_context = np.random.randint(context_min, total_size)
         num_target = np.random.randint(0, total_size - num_context)
         sampled = np.random.choice(total_size, num_context+num_target, replace=False)
