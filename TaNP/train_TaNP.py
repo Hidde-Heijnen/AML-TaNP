@@ -77,7 +77,7 @@ parser.add_argument('--dataset', type=str, default='lastfm_20', choices=['ml-1m'
 parser.add_argument('--embedding_dim', type=int, default=32, help='embedding dimension for each item/user feature of Movie lens')
 parser.add_argument('--first_fc_hidden_dim', type=int, default=64, help='embedding dimension for each item/user feature of Movie lens')
 parser.add_argument('--second_fc_hidden_dim', type=int, default=64, help='embedding dimension for each item/user feature of Movie lens')
-parser.add_argument('--clear_previous_movielens', type=bool, default=True, help='Clear previously generated data before generating new data with possibly different parameters.')
+parser.add_argument('--regenerate_movielens', type=bool, default=True, help='Clear previously generated data before generating new data with possibly different parameters.')
 
 args = parser.parse_args()
 
@@ -102,9 +102,13 @@ opt = vars(args)
 
 model_dataset_save_dir = f"{opt['model_save_dir']}/{opt['dataset']}"
 
+# Create a run-specific directory using the ID
+run_dir = f"{model_dataset_save_dir}/{opt['id']}"
+helper.ensure_dir(run_dir, verbose=True)
+
 dataset_dir = f"{opt['data_dir']}/{opt['dataset']}" 
 
-if opt['dataset'] == 'ml-1m' and not os.path.exists(os.path.join(dataset_dir, "warm_state")):
+if opt['dataset'] == 'ml-1m' and (opt['regenerate_movielens'] or not os.path.exists(os.path.join(dataset_dir, "warm_state"))):
     print("Generating data...")
     generate_movielens(dataset_dir, opt)
 
@@ -112,9 +116,9 @@ if opt['dataset'] == 'ml-1m' and not os.path.exists(os.path.join(dataset_dir, "w
 helper.print_config(opt)
 helper.ensure_dir(model_dataset_save_dir, verbose=True)
 # save model config
-helper.save_config(opt, model_dataset_save_dir + "/" +opt["id"] + '.config', verbose=True)
+helper.save_config(opt, run_dir + "/" + 'config.json', verbose=True)
 # record training log
-file_logger = helper.FileLogger(model_dataset_save_dir + '/' + opt['id'] + ".log",
+file_logger = helper.FileLogger(run_dir + '/' + "train.log",
                                 header="# epoch\ttrain_loss\tprecision5\tNDCG5\tMAP5\tprecision7"
                                        "\tNDCG7\tMAP7\tprecision10\tNDCG10\tMAP10")
 
@@ -130,7 +134,7 @@ trainer = Trainer(opt)
 if opt['use_cuda']:
     trainer.cuda()
 
-model_filename = "{}/{}.pt".format(model_dataset_save_dir, opt["id"])
+model_filename = "{}/model.pt".format(run_dir)
 
 training_subdir = "training/log"
 testing_subdir = "testing/log"
@@ -182,7 +186,7 @@ if not os.path.exists(model_filename):
 
 else:
     print("Load pre-trained model...")
-    opt = helper.load_config(model_filename[:-2]+"config")
+    opt = helper.load_config(run_dir + "/config.json")
     helper.print_config(opt)
     trained_state_dict = torch.load(model_filename)
     trainer.load_state_dict(trained_state_dict)

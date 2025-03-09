@@ -96,13 +96,10 @@ def generate_movielens(master_path, opt):
     # Check if master_path exists
     if not os.path.exists(master_path):
         raise FileNotFoundError(f"The master path {master_path} does not exist. You should clone the repository first using clone_movielends_dataset.sh")
-    
-    # Clear previously generated data before generating new data with possibly different parameters
-    if opt['clear_previous_movielens']:
-        clear_generated_data(master_path, states)
-        print(f"Generating new data with support_size={opt['support_size']}, query_size={opt['query_size']}")
-    else:
-        print(f"Adding to existing data with support_size={opt['support_size']}, query_size={opt['query_size']}")
+ 
+    clear_generated_data(master_path, states)
+    print(f"Generating new data with support_size={opt['support_size']}, query_size={opt['query_size']}")
+
     
     # Loading feature lists
     rate_list = load_list(os.path.join(master_path, "m_rate.txt"))
