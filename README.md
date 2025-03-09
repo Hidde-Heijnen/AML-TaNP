@@ -24,19 +24,20 @@ python == 3.6.3
 ## Datasets
 
 MoviesLens-1M is provided by MeLU, and you can find it from [here](https://github.com/hoyeoplee/MeLU).  
- Last.FM is provided by MKR, and you can find it from [here](https://github.com/hwwang55/MKR).  
- Gowalla is provided by NGCF, and you can find it from [here](https://github.com/xiangwang1223/neural_graph_collaborative_filtering).
+ Last.FM is provided by HetRec, and you can find it from [here](https://grouplens.org/datasets/hetrec-%202011/).
 
 ## How to use
 
-The utils/loader is used for data preprocessing, and you can customize this part for your own data.  
- Use the following commands for running a sub-dataset:  
- unzip data.zip file
-run:
+Use the following commands for running setting up the datasets and start running:
+
+1. unzip data.zip file
+2. unzip lastfm_hetrec.zip
+3. drag the lastfmfm_hetrec folder into the data folder
+4. run:
 
 ```bash
 chmod +x TaNP/clone_movielens_dataset.sh
 TaNP/clone_movielens_dataset.sh
 ```
 
-zsh train.sh # Training with default hyper-parameters.
+5. zsh train.sh # Training with default hyper-parameters.
