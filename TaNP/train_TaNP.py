@@ -105,7 +105,7 @@ dataset_dir = f"{opt['data_dir']}/{opt['dataset']}"
 
 if opt['dataset'] == 'ml-1m' and not os.path.exists(os.path.join(dataset_dir, "warm_state")):
     print("Generating data...")
-    generate_movielens(dataset_dir)
+    generate_movielens(dataset_dir, opt)
 
 # print model info
 helper.print_config(opt)

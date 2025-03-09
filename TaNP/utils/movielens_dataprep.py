@@ -132,7 +132,7 @@ def generate_movielens(master_path, opt):
         for user_id in tqdm(dataset_json.keys()):
             u_id = int(user_id)
             seen_movie_len = len(dataset_json[user_id])  # Keys are strings in JSON
-            if seen_movie_len < (support_size + query_size) or seen_movie_len > 100:
+            if seen_movie_len < (support_size + query_size) or seen_movie_len > opt['max_len']:
                 continue
 
             indices = list(range(seen_movie_len))
