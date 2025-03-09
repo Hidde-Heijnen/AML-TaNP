@@ -102,8 +102,8 @@ opt = vars(args)
 
 model_dataset_save_dir = f"{opt['model_save_dir']}/{opt['dataset']}"
 
-# Create a run-specific directory using the ID
-run_dir = f"{model_dataset_save_dir}/{opt['id']}"
+# Create a run-specific directory using the ID and decoder type
+run_dir = f"{model_dataset_save_dir}/{opt['decoder']}_{opt['id']}"
 helper.ensure_dir(run_dir, verbose=True)
 
 dataset_dir = f"{opt['data_dir']}/{opt['dataset']}" 
