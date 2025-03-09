@@ -62,7 +62,7 @@ parser.add_argument('--batch_size', type=int, default=32)#1
 parser.add_argument('--train_ratio', type=float, default=0.7, help='Warm user ratio for training.')#1
 parser.add_argument('--valid_ratio', type=float, default=0.1, help='Cold user ratio for validation.')#1
 parser.add_argument('--seed', type=int, default=2020)#1
-parser.add_argument('--save', type=int, default=0)#1
+parser.add_argument('--save', type=bool, default=True)#1
 parser.add_argument('--use_cuda', type=bool, default=torch.cuda.is_available())#1
 parser.add_argument('--cpu', action='store_true', help='Ignore CUDA.')#1
 parser.add_argument('--support_size', type=int, default=20)#1
@@ -183,7 +183,6 @@ if not os.path.exists(model_filename):
     print("Start training...")
     training(trainer, opt, train_dataset, test_dataset, batch_size=opt['batch_size'], num_epoch=opt['num_epoch'],
             model_save=opt["save"], model_filename=model_filename, logger=file_logger)
-
 else:
     print("Load pre-trained model...")
     opt = helper.load_config(run_dir + "/config.json")
