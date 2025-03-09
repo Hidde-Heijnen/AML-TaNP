@@ -15,7 +15,8 @@ from TaNP import Trainer
 from TaNP_training import training
 from utils import helper
 from eval import testing
-from utils.movielens_dataprep import generate
+from utils.movielens_dataprep import generate_movielens
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', type=str, default='data')#1
 parser.add_argument('--model_save_dir', type=str, default='save_model_dir')#1
@@ -104,7 +105,7 @@ dataset_dir = f"{opt['data_dir']}/{opt['dataset']}"
 
 if opt['dataset'] == 'ml-1m' and not os.path.exists(os.path.join(dataset_dir, "warm_state")):
     print("Generating data...")
-    generate(dataset_dir)
+    generate_movielens(dataset_dir)
 
 # print model info
 helper.print_config(opt)

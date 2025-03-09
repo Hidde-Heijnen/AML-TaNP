@@ -7,6 +7,7 @@ import numpy as np
 import torch
 from tqdm import tqdm
 import pandas as pd
+from datetime import datetime
 
 states = ["warm_state", "user_cold_state", "item_cold_state", "user_and_item_cold_state"]
 
@@ -68,6 +69,11 @@ def load_list(fname):
     return list_
 
 def generate(master_path):
+
+    # check if the master_path exists
+    if not os.path.exists(master_path):
+        raise FileNotFoundError(f"The master path {master_path} does not exist. You should clone the repository first using clone_movielends_dataset.sh")
+    
     # Loading
     rate_list = load_list("{}/m_rate.txt".format(master_path))
     genre_list = load_list("{}/m_genre.txt".format(master_path))
