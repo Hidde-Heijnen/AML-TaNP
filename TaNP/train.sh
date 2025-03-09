@@ -17,7 +17,7 @@ dec_h3_dim=16
 dropout_rate=0
 lr=0.0001
 optim='adam'
-num_epoch=40
+num_epoch=150
 batch_size=32
 train_ratio=0.7
 valid_ratio=0.1
@@ -25,8 +25,8 @@ support_size=20
 query_size=10
 max_len=200
 context_min=20
-dataset=ml-1m # ml-1m, lastfm_20, lastfm_hetrec
-decoder=base # gating-film, film, base
+dataset=lastfm_hetrec # ml-1m, lastfm_20, lastfm_hetrec
+decoder=gating-film # gating-film, film, base
 CUDA_VISIBLE_DEVICES=0 python train_TaNP.py \
  --first_embedding_dim $first_embedding_dim \
  --second_embedding_dim $second_embedding_dim \

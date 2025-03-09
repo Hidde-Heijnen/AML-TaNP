@@ -17,6 +17,7 @@ from TaNP_training import training
 from utils import helper
 from eval import testing
 from utils.movielens_dataprep import generate_movielens
+from utils.lastfm_hetrec_dataprep import generate_lastfm_hetrec
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', type=str, default='data')#1
@@ -130,6 +131,11 @@ if opt['dataset'] == 'lastfm_20':
     print("Preprocess is done.")
     opt['uf_dim'] = preprocess.uf_dim
     opt['if_dim'] = preprocess.if_dim
+elif opt['dataset'] == 'lastfm_hetrec':
+    uf_dim, if_dim = generate_lastfm_hetrec(dataset_dir, opt)
+    opt['uf_dim'] = uf_dim
+    opt['if_dim'] = if_dim
+    print("LastFM-HetRec preprocess is done.")
 
 print("Create model TaNP...")
 
@@ -148,8 +154,9 @@ if opt['dataset'] == 'lastfm_20':
 elif opt['dataset'] == 'ml-1m':
     training_subdir = "warm_state"
     testing_subdir = "user_cold_state"
-else:
-    raise ValueError(f"Dataset {opt['dataset']} not implemented yet")
+elif opt['dataset'] == 'lastfm_hetrec':
+    training_subdir = "training/log"
+    testing_subdir = "testing/log"
 
 # /4 since sup_x, sup_y, query_x, query_y 
 training_set_size = int(len(os.listdir(f"{dataset_dir}/{training_subdir}")) / 4)
