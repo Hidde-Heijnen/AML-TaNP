@@ -25,8 +25,8 @@ support_size=20
 query_size=10
 max_len=200
 context_min=20
-dataset=ml-1m
-decoder=film
+dataset=ml-1m # ml-1m, lastfm_20, lastfm_hetrec
+decoder=base # gating-film, film, base
 CUDA_VISIBLE_DEVICES=0 python train_TaNP.py \
  --first_embedding_dim $first_embedding_dim \
  --second_embedding_dim $second_embedding_dim \

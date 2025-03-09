@@ -376,7 +376,7 @@ class Plain_Decoder(nn.Module):
     """
 
     def __init__(self, x_dim, z_dim, task_dim, h1_dim, h2_dim, h3_dim, y_dim, dropout_rate):
-        super(PlainDecoder, self).__init__()
+        super(Plain_Decoder, self).__init__()
         self.x_dim = x_dim
         self.z_dim = z_dim
         self.task_dim = task_dim  # not used here, but kept for consistency
