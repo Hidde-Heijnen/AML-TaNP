@@ -71,7 +71,8 @@ def training(trainer, opt, train_dataset, test_dataset, batch_size, num_epoch, m
 
     # Save final model if requested (in addition to best model)
     if model_save and (not save_best or model_filename is not None):
-        torch.save(trainer.state_dict(), model_filename)
+        last_model_filename = f"{base}_last_epoch{ext}"
+        torch.save(trainer.state_dict(), last_model_filename)
         logger.log(f"Final model saved after {num_epoch} epochs")
     
     # Log information about best model

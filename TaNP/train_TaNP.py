@@ -105,7 +105,7 @@ model_dataset_save_dir = f"{opt['model_save_dir']}/{opt['dataset']}"
 
 # Create a run-specific directory using the ID and decoder type, if id is 0, then it will automatically generate a new id
 if opt['id'] == '0':
-    opt['id'] = str(uuid.uuid4())
+    opt['id'] = str(int(time.time()))  # Use timestamp as ID
 run_dir = f"{model_dataset_save_dir}/{opt['decoder']}_{opt['id']}"
 helper.ensure_dir(run_dir, verbose=True)
 
@@ -183,9 +183,10 @@ del (supp_xs_s, supp_ys_s, query_xs_s, query_ys_s)
 print("# epoch\ttrain_loss\tprecision5\tNDCG5\tMAP5\tprecision7\tNDCG7\tMAP7\tprecision10\tNDCG10\tMAP10")
 
 if not os.path.exists(model_filename):
-    print("Start training...")
+    print(f"Start training... ID: {opt['id']}")
     training(trainer, opt, train_dataset, test_dataset, batch_size=opt['batch_size'], num_epoch=opt['num_epoch'],
             model_save=opt["save"], model_filename=model_filename, logger=file_logger)
+    print(f"Training completed. ID: {opt['id']}")
 else:
     print("Load pre-trained model...")
     opt = helper.load_config(run_dir + "/config.json")
