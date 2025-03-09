@@ -137,7 +137,7 @@ testing_subdir = "testing/log"
 if opt['dataset'] == 'lastfm_20':
     training_subdir = "training/log"
     testing_subdir = "testing/log"
-elif opt['dataset'] == 'movielens_1m':
+elif opt['dataset'] == 'ml-1m':
     training_subdir = "warm_state"
     testing_subdir = "user_cold_state"
 else:

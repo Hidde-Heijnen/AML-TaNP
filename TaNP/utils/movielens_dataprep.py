@@ -68,7 +68,7 @@ def load_list(fname):
             list_.append(line.strip())
     return list_
 
-def generate(master_path):
+def generate_movielens(master_path):
     # Check if master_path exists
     if not os.path.exists(master_path):
         raise FileNotFoundError(f"The master path {master_path} does not exist. You should clone the repository first using clone_movielends_dataset.sh")

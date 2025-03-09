@@ -13,7 +13,7 @@ class NP(nn.Module):
         super(NP, self).__init__()
         self.dataset = config['dataset']
         self.decoder = config['decoder']
-        self.x_dim = config['second_embedding_dim'] * 2 if self.dataset == 'ml-1m' else config['embedding_dim'] * 8
+        self.x_dim = config['embedding_dim'] * 8 if self.dataset == 'ml-1m' else  config['second_embedding_dim'] * 2
         # use one-hot or not?
         self.y_dim = 1
         self.z1_dim = config['z1_dim']
@@ -118,6 +118,7 @@ class Trainer(torch.nn.Module):
         self.opt = config
         super(Trainer, self).__init__()
         self.use_cuda = config['use_cuda']
+        self.dataset = config['dataset']
         self.np = NP(self.opt)
         self._lambda = config['lambda']
         self.optimizer = torch.optim.Adam(self.np.parameters(), lr=config['lr'])
