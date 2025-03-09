@@ -6,6 +6,7 @@ import random
 import argparse
 import pickle
 import torch
+import uuid
 import torch.nn as nn
 import torch.optim as optim
 from torch.autograd import Variable
@@ -20,7 +21,7 @@ from utils.movielens_dataprep import generate_movielens
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', type=str, default='data')#1
 parser.add_argument('--model_save_dir', type=str, default='save_model_dir')#1
-parser.add_argument('--id', type=str, default='1', help='used for save hyper-parameters.')#1
+parser.add_argument('--id', type=str, default='0', help='used for save hyper-parameters. if 0, then it will automatically generate a new id.')#1
 
 parser.add_argument('--first_embedding_dim', type=int, default=32, help='Embedding dimension for item and user.')#1
 parser.add_argument('--second_embedding_dim', type=int, default=16, help='Embedding dimension for item and user.')#1
@@ -102,7 +103,9 @@ opt = vars(args)
 
 model_dataset_save_dir = f"{opt['model_save_dir']}/{opt['dataset']}"
 
-# Create a run-specific directory using the ID and decoder type
+# Create a run-specific directory using the ID and decoder type, if id is 0, then it will automatically generate a new id
+if opt['id'] == '0':
+    opt['id'] = str(uuid.uuid4())
 run_dir = f"{model_dataset_save_dir}/{opt['decoder']}_{opt['id']}"
 helper.ensure_dir(run_dir, verbose=True)
 
@@ -187,6 +190,6 @@ else:
     print("Load pre-trained model...")
     opt = helper.load_config(run_dir + "/config.json")
     helper.print_config(opt)
-    trained_state_dict = torch.load(model_filename)
+    trained_state_dict = torch.load(model_filename, weights_only=True)
     trainer.load_state_dict(trained_state_dict)
 
