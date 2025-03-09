@@ -68,10 +68,41 @@ def load_list(fname):
             list_.append(line.strip())
     return list_
 
+def clear_generated_data(master_path, states):
+    """
+    Clear previously generated data files to ensure clean generation with new parameters.
+    """
+    # Remove generated pkl files in state directories
+    for state in states:
+        state_path = os.path.join(master_path, state)
+        if os.path.exists(state_path):
+            for file in os.listdir(state_path):
+                if file.endswith('.pkl'):
+                    os.remove(os.path.join(state_path, file))
+            print(f"Cleared previously generated data in {state_path}")
+    
+    # Remove log files
+    log_dir = os.path.join(master_path, "log")
+    if os.path.exists(log_dir):
+        for state in states:
+            log_state_path = os.path.join(log_dir, state)
+            if os.path.exists(log_state_path):
+                for file in os.listdir(log_state_path):
+                    if file.endswith('.txt'):
+                        os.remove(os.path.join(log_state_path, file))
+                print(f"Cleared log files in {log_state_path}")
+
 def generate_movielens(master_path, opt):
     # Check if master_path exists
     if not os.path.exists(master_path):
         raise FileNotFoundError(f"The master path {master_path} does not exist. You should clone the repository first using clone_movielends_dataset.sh")
+    
+    # Clear previously generated data before generating new data with possibly different parameters
+    if opt['clear_previous_movielens']:
+        clear_generated_data(master_path, states)
+        print(f"Generating new data with support_size={opt['support_size']}, query_size={opt['query_size']}")
+    else:
+        print(f"Adding to existing data with support_size={opt['support_size']}, query_size={opt['query_size']}")
     
     # Loading feature lists
     rate_list = load_list(os.path.join(master_path, "m_rate.txt"))

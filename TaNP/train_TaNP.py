@@ -77,6 +77,7 @@ parser.add_argument('--dataset', type=str, default='lastfm_20', choices=['ml-1m'
 parser.add_argument('--embedding_dim', type=int, default=32, help='embedding dimension for each item/user feature of Movie lens')
 parser.add_argument('--first_fc_hidden_dim', type=int, default=64, help='embedding dimension for each item/user feature of Movie lens')
 parser.add_argument('--second_fc_hidden_dim', type=int, default=64, help='embedding dimension for each item/user feature of Movie lens')
+parser.add_argument('--clear_previous_movielens', type=bool, default=True, help='Clear previously generated data before generating new data with possibly different parameters.')
 
 args = parser.parse_args()
 
