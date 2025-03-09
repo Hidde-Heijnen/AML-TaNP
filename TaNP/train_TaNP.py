@@ -100,11 +100,11 @@ opt = vars(args)
 
 model_dataset_save_dir = f"{opt['model_save_dir']}/{opt['dataset']}"
 
-data_dir = "data/ml-1m"
+dataset_dir = f"{opt['data_dir']}/{opt['dataset']}" 
 
-if opt['dataset'] == 'ml-1m' and not os.path.exists(os.path.join(data_dir, "warm_state")):
+if opt['dataset'] == 'ml-1m' and not os.path.exists(os.path.join(dataset_dir, "warm_state")):
     print("Generating data...")
-    generate(data_dir)
+    generate(dataset_dir)
 
 # print model info
 helper.print_config(opt)
@@ -129,7 +129,6 @@ if opt['use_cuda']:
     trainer.cuda()
 
 model_filename = "{}/{}.pt".format(model_dataset_save_dir, opt["id"])
-dataset_dir = f"{opt['data_dir']}/{opt['dataset']}" 
 
 training_subdir = "training/log"
 testing_subdir = "testing/log"
