@@ -68,7 +68,7 @@ def load_list(fname):
             list_.append(line.strip())
     return list_
 
-def generate_movielens(master_path):
+def generate_movielens(master_path, opt):
     # Check if master_path exists
     if not os.path.exists(master_path):
         raise FileNotFoundError(f"The master path {master_path} does not exist. You should clone the repository first using clone_movielends_dataset.sh")
@@ -91,6 +91,9 @@ def generate_movielens(master_path):
     log_dir = os.path.join(master_path, "log")
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
+
+    support_size = opt['support_size']
+    query_size = opt['query_size']
 
     # Initialize dataset
     dataset = Movielens_1m(master_path)  # Fixed: Pass master_path
@@ -129,7 +132,7 @@ def generate_movielens(master_path):
         for user_id in tqdm(dataset_json.keys()):
             u_id = int(user_id)
             seen_movie_len = len(dataset_json[user_id])  # Keys are strings in JSON
-            if seen_movie_len < 13 or seen_movie_len > 100:
+            if seen_movie_len < (support_size + query_size) or seen_movie_len > 100:
                 continue
 
             indices = list(range(seen_movie_len))
@@ -137,8 +140,8 @@ def generate_movielens(master_path):
             tmp_x = np.array(dataset_json[user_id], dtype=int)  # Ensure integer type
             tmp_y = np.array(dataset_y[user_id])
 
-            support_indices = indices[:-10]
-            query_indices = indices[-10:]
+            support_indices = indices[:support_size]
+            query_indices = indices[support_size:]
             support_movie_ids = tmp_x[support_indices]
             query_movie_ids = tmp_x[query_indices]
 
