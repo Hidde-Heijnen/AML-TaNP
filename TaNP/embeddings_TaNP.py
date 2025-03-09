@@ -30,7 +30,7 @@ class Item(torch.nn.Module):
 
 class Movie_item(torch.nn.Module):
     def __init__(self, config):
-        super(Moive_item, self).__init__()
+        super(Movie_item, self).__init__()
         self.num_rate = config['num_rate']
         self.num_genre = config['num_genre']
         self.num_director = config['num_director']

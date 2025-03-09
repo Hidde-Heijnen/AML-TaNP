@@ -5,7 +5,7 @@ from copy import deepcopy
 from torch.autograd import Variable
 from torch.nn import functional as F
 from collections import OrderedDict
-from embeddings_TaNP import Item, User, Encoder, Plain_Decoder, MuSigmaEncoder, Decoder, Gating_Decoder, TaskEncoder, MemoryUnit, Movie_Item, Movie_User
+from embeddings_TaNP import Item, User, Encoder, Plain_Decoder, MuSigmaEncoder, Decoder, Gating_Decoder, TaskEncoder, MemoryUnit, Movie_item, Movie_user
 import torch.nn as nn
 
 class NP(nn.Module):
@@ -38,8 +38,8 @@ class NP(nn.Module):
 
         # Initialize networks
         if self.dataset == 'ml-1m':
-            self.item_emb = Movie_Item(config)
-            self.user_emb = Movie_User(config)
+            self.item_emb = Movie_item(config)
+            self.user_emb = Movie_user(config)
         else:
             self.item_emb = Item(config)
             self.user_emb = User(config)
