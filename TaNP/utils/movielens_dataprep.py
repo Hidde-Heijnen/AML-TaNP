@@ -92,7 +92,7 @@ def generate(master_path):
     if not os.path.exists("{}/log/".format(master_path)):
         os.mkdir("{}/log/".format(master_path))
 
-    dataset = Movielens_1m()
+    dataset = Movielens_1m(master_path)
 
     if not os.path.exists("{}/m_movie_dict.pkl".format(master_path)):
         movie_dict = {}
