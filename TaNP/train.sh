@@ -25,6 +25,8 @@ support_size=20
 query_size=10
 max_len=200
 context_min=20
+dataset=ml-1m
+decoder=film
 CUDA_VISIBLE_DEVICES=0 python train_TaNP.py \
  --first_embedding_dim $first_embedding_dim \
  --second_embedding_dim $second_embedding_dim \
@@ -52,4 +54,6 @@ CUDA_VISIBLE_DEVICES=0 python train_TaNP.py \
  --support_size $support_size \
  --query_size $query_size \
  --max_len $max_len \
- --context_min $context_min
+ --context_min $context_min \
+ --dataset $dataset \
+ --decoder $decoder
