@@ -56,4 +56,5 @@ CUDA_VISIBLE_DEVICES=0 python train_TaNP.py \
  --max_len $max_len \
  --context_min $context_min \
  --dataset $dataset \
- --decoder $decoder
+ --decoder $decoder \
+ "$@"
