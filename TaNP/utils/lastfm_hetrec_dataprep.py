@@ -230,11 +230,7 @@ def generate_lastfm_hetrec(master_path, opt):
             
             # Split into support and query sets
             support_indices = indices[:support_size]
-            query_indices = indices[support_size:support_size + query_size]
-            
-            # Skip if query set is too small
-            if len(query_indices) < query_size:
-                continue
+            query_indices = indices[support_size:]
             
             # Prepare support set features and labels
             support_x_app = None
