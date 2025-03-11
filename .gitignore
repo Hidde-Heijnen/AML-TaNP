@@ -5,7 +5,5 @@ TaNP/data/
 .DS_Store?
 .DS_Store
 
-TaNP/save_model_dir/
-
 # ignore __pycache__ folders everywhere
 __pycache__/
