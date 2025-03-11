@@ -68,7 +68,7 @@ class Preprocess(object):
         self.train_ratio = opt['train_ratio']
         self.valid_ratio = opt['valid_ratio']
         self.test_ratio = 1 - self.train_ratio - self.valid_ratio
-        self.dataset_path = opt["data_dir"]
+        self.dataset_path = opt["data_dir"] + "/" + opt['dataset']
         self.support_size = opt['support_size']
         self.query_size = opt['query_size']
         self.max_len = opt['max_len']

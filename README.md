@@ -41,3 +41,10 @@ TaNP/clone_movielens_dataset.sh
 ```
 
 5. zsh train.sh # Training with default hyper-parameters.
+
+you can also run it like this:
+
+```bash
+cd TaNP
+./train.sh --dataset="ml-1m" --decoder="base"
+```
