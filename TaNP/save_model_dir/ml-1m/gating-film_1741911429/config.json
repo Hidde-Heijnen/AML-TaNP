@@ -1,7 +1,7 @@
 {
   "data_dir": "data",
   "model_save_dir": "save_model_dir",
-  "id": "1741707780",
+  "id": "1741911429",
   "first_embedding_dim": 32,
   "second_embedding_dim": 16,
   "z1_dim": 32,
@@ -42,7 +42,7 @@
   "max_len": 200,
   "context_min": 20,
   "decoder": "gating-film",
-  "dataset": "lastfm_hetrec",
+  "dataset": "ml-1m",
   "embedding_dim": 32,
   "first_fc_hidden_dim": 64,
   "second_fc_hidden_dim": 64,

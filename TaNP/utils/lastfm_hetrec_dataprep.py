@@ -130,9 +130,15 @@ def generate_lastfm_hetrec(master_path, opt):
     user_list = []
     item_list = []
     
+    # Use support_size + query_size as minimum threshold instead of fixed 40
+    min_interactions = opt['support_size'] + opt['query_size']
+    
+    print("max length: ", opt['max_len'])
+    print("min interactions: ", min_interactions)
+    
     for user_id, artist_data in dataset.user_artists_data.items():
         # Skip users with too few or too many interactions
-        if len(artist_data) < 40 or len(artist_data) > opt['max_len']:
+        if len(artist_data) < min_interactions or len(artist_data) > opt['max_len']:
             continue
         
         user_list.append(user_id)
@@ -150,7 +156,7 @@ def generate_lastfm_hetrec(master_path, opt):
             feedback = 1 if weight >= median_weight else 0
             inter_dict_y[user_id].append(feedback)
     
-    # Get unique items
+    # Get unique items and users
     item_list = list(set(item_list))
     user_list = list(set(user_list))
     
@@ -158,7 +164,7 @@ def generate_lastfm_hetrec(master_path, opt):
     print(f"Number of items: {len(item_list)}")
     print(f"Number of interactions: {sum(len(items) for items in inter_dict_x.values())}")
     
-    # Save the processed data
+    # Save the processed data to JSON files
     with open(os.path.join(master_path, 'interaction_dict_x.json'), 'w') as f:
         json.dump(inter_dict_x, f)
     
@@ -189,7 +195,23 @@ def generate_lastfm_hetrec(master_path, opt):
     test_dict_x = {u: inter_dict_x[u] for u in test_users}
     test_dict_y = {u: inter_dict_y[u] for u in test_users}
     
-    # Save the split data
+    # Remove cold items from test set (items not seen in training)
+    print("Removing cold items from test set...")
+    print('Before removing cold items, test data has {} interactions.'.format(sum(len(v) for v in test_dict_x.values())))
+    train_item_set = set()
+    for items in train_dict_x.values():
+        train_item_set.update(items)
+    
+    for user in test_dict_x.keys():
+        items = test_dict_x[user]
+        feedbacks = test_dict_y[user]
+        filtered_items = [item for item, f in zip(items, feedbacks) if item in train_item_set]
+        filtered_feedbacks = [f for item, f in zip(items, feedbacks) if item in train_item_set]
+        test_dict_x[user] = filtered_items
+        test_dict_y[user] = filtered_feedbacks
+    print('After removing cold items, test data has {} interactions.'.format(sum(len(v) for v in test_dict_x.values())))
+    
+    # Save the split data to pickle files
     test_ratio = 1 - opt['train_ratio'] - opt['valid_ratio']
     pickle.dump(train_dict_x, open(os.path.join(master_path, f"training_dict_x_{opt['train_ratio']:.6f}.pkl"), "wb"))
     pickle.dump(train_dict_y, open(os.path.join(master_path, f"training_dict_y_{opt['train_ratio']:.6f}.pkl"), "wb"))
@@ -280,7 +302,7 @@ def generate_lastfm_hetrec(master_path, opt):
     valid_episodes = generate_episodes(valid_dict_x, valid_dict_y, "validation")
     test_episodes = generate_episodes(test_dict_x, test_dict_y, "testing")
     
-    print(f"Successfully prepared LastFM-HetRec dataset!")
+    print("Successfully prepared LastFM-HetRec dataset!")
     print(f"Train episodes: {train_episodes}")
     print(f"Validation episodes: {valid_episodes}")
     print(f"Test episodes: {test_episodes}")
