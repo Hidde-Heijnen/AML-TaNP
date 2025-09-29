@@ -170,10 +170,10 @@ def visualise_exp4(result_path):
         plt.savefig(save_path)
         # plt.show()
     
-    # 绘制 k 的图
+    # plot k values results
     plot_metrics(results, 'k', 'P@10 on MovieLens-1M', 'k Values', 'P@10 (%)', 'p10_vs_k.png')
     
-    # 绘制 lambda 的图
+    # plot lambda values results
     plot_metrics(results, 'lambda', 'P@10 on MovieLens-1M', 'λ Values', 'P@10 (%)', 'p10_vs_lambda.png')
 
 
@@ -218,7 +218,6 @@ if exp_part == 2:
     for dataset_folder in os.listdir(base_dir):
         dataset_path = os.path.join(base_dir, dataset_folder)
 
-        # 确保是文件夹
         if not os.path.isdir(dataset_path):
             continue
 
@@ -228,7 +227,7 @@ if exp_part == 2:
             if not os.path.isdir(model_path):
                 continue
 
-            # 查找 config.json 和 model_best.pt
+            # find config.json and model_best.pt
             config_path = os.path.join(model_path, "config.json")
             model_file = os.path.join(model_path, "model_best.pt")
 
@@ -307,39 +306,39 @@ if exp_part == 0:
         xs = ["MetaNLBA", "MeLU", "MetaCS", "MAMO", "TaNP(w/o tm)", "TaNP(FiLM)", "TaNP(Gating-FiLM)"]
         ys = [83.9, 86.0, 85.4, 86.1, 87.58, 89.09, 88.18]
         title = r"Last.FM with $N_{S_i}=10$"
-        save_path = '/home/cz426/rds/hpc-work/MLMI4/AML-TaNP/TaNP/N10_lastFM.png'
+        save_path = 'N10_lastFM.png'
         visualise_exp2(xs, ys, title, save_path, 82.5, 90)
 
         # LastFM with Ns=15
         ys = [84.9, 86.2, 86.3, 86.5, 87.8, 88.2, 89.1]
         title = r"Last.FM with $N_{S_i}=15$"
-        save_path = '/home/cz426/rds/hpc-work/MLMI4/AML-TaNP/TaNP/N15_lastFM.png'
+        save_path = 'N15_lastFM.png'
         visualise_exp2(xs, ys, title, save_path, 82.5, 90)
 
         # MovieLens-1M with Ns=10
         xs = ["MeLU","MetaCS","MetaHIN","MAMO","TaNP(w/o tm)","TaNP(FiLM)","TaNP(Gating-FiLM)"]
         ys = [57.2, 57.23, 57.6, 59.2, 62.2, 62.37, 62.25]
         title = r"MovieLens-1M with $N_{S_i}=10$"
-        save_path = '/home/cz426/rds/hpc-work/MLMI4/AML-TaNP/TaNP/N10_MovieLens-1M.png'
+        save_path = 'N10_MovieLens-1M.png'
         visualise_exp2(xs, ys, title, save_path, 56, 64.5)
 
         ys = [59.5, 59.4, 59.9, 60.0, 62.24, 62.40, 63.50]
         title = r"MovieLens-1M with $N_{S_i}=15$"
-        save_path = '/home/cz426/rds/hpc-work/MLMI4/AML-TaNP/TaNP/N15_MovieLens-1M.png'
+        save_path = 'N15_MovieLens-1M.png'
         visualise_exp2(xs, ys, title, save_path, 56, 64.5)
 
 
     elif pic_flag == 3:
         pass
     elif pic_flag == 4:
-        # visualise_exp4("/home/cz426/rds/hpc-work/MLMI4/AML-TaNP/TaNP/results_lambda_k.txt")
+        # visualise_exp4("results_lambda_k.txt")
 
         ## plain plot for lambda
         xs = [0.01, 0.05, 0.1, 0.5, 1.0]  # lambda
         y1 = [88.0, 88.4, 88.6, 88.2, 87.9]  # Gating-FiLM
         y2 = [87.4, 88.0, 88.4, 87.8, 87.6]  # FiLM
         title = "P@10 on LastFM"
-        path = "/home/cz426/rds/hpc-work/MLMI4/AML-TaNP/TaNP/p10_vs_lambda_lastFM.png"
+        path = "p10_vs_lambda_lastFM.png"
         visualise_exp4_plaindata(xs, y1, y2, title, "λ Values", "P@10", path)
 
         ## plain plot for k
@@ -347,5 +346,5 @@ if exp_part == 0:
         y1 = [88.0, 88.7, 88.2, 87.9, 87.8]
         y2 = [88.6, 88.2, 87.7, 87.6, 87.3]
         title = "P@10 on LastFM"
-        path = "/home/cz426/rds/hpc-work/MLMI4/AML-TaNP/TaNP/p10_vs_k_lastFM.png"
+        path = "p10_vs_k_lastFM.png"
         visualise_exp4_plaindata(xs, y1, y2, title, "k Values", "P@10", path)
