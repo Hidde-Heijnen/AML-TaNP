@@ -104,8 +104,8 @@ def evaluating_model(opt, model_file_path):
     trained_state_dict = torch.load(model_filename, weights_only=True)
     trainer.load_state_dict(trained_state_dict)
 
-    # envaluate
-    print('Envaluating...')
+    # evaluate
+    print('Evaluating...')
     P5, NDCG5, MAP5, P7, NDCG7, MAP7, P10, NDCG10, MAP10 = testing(trainer, opt, test_dataset)
 
     print('Result for {} and {}'.format(opt['decoder'], opt['dataset']))
@@ -205,13 +205,13 @@ def visualise_exp4_plaindata(xs, y1, y2, title, xlabel, ylabel, save_path):
 adjust code mode here..
 '''
 
-exp_part = 0  # plot or envaluate. plot = 0, envaluate = exp number
+exp_part = 0  # plot or evaluate. plot = 0, evaluate = exp number
 pic_flag = 2  # plot which exp
 
 if exp_part == 2:
 
-    base_dir = "/home/cz426/rds/hpc-work/MLMI4/AML-TaNP/TaNP/save_model_dir"
-    output_file = "/home/cz426/rds/hpc-work/MLMI4/AML-TaNP/TaNP/results.json"
+    base_dir = "save_model_dir"
+    output_file = "results.json"
 
     results = []
 
@@ -259,7 +259,7 @@ elif exp_part == 3:
 
 elif exp_part == 4:
     # dataset: LastFM
-    data_dir = '/home/cz426/rds/hpc-work/MLMI4/AML-TaNP/TaNP/save_model_dir/lastfm_20'
+    data_dir = 'save_model_dir/lastfm_20'
     
     results = {
     'gating_k': [], 'film_k': [],
